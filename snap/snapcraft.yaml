@@ -21,16 +21,8 @@ parts:
     plugin: nil
     override-build: |
       git apply -v ../../../uboot4.patch
-      cp -av arch/arm/dts/bcm2711-rpi-4-b.dtb .
-
       make rpi_3_32b_defconfig
-      TCHAINVER="$(wget -q -O - \
-                 https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/| \
-                 html2text -width 200|grep 'x86_64_arm-linux-gnueabihf.tar.xz '|cut -d' ' -f2)"
-      wget https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/$TCHAINVER
-      tar xf $TCHAINVER
-      mv $(echo $TCHAINVER|sed 's/.tar.xz$//') toolchain
-      EXT_DTB=../../../bcm2711-rpi-4-b.dtb CROSS_COMPILE=$(pwd)/toolchain/bin/arm-linux-gnueabihf- make
+      EXT_DTB=../../../bcm2711-rpi-4-b.dtb ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- make -j4
       mkdir -p $SNAPCRAFT_PART_INSTALL/boot-assets
       cp -av u-boot.bin $SNAPCRAFT_PART_INSTALL/boot-assets/uboot4.bin
       tools/mkenvimage -r -s 131072 -o $SNAPCRAFT_PART_INSTALL/uboot.env ../../../uboot.env.in
@@ -55,9 +47,6 @@ parts:
       mkdir -p $SNAPCRAFT_PART_INSTALL/boot-assets
       cp -av firmware/boot/* $SNAPCRAFT_PART_INSTALL/boot-assets
       cp -av ../../../bcm2711-rpi-4-b.dtb $SNAPCRAFT_PART_INSTALL/boot-assets/
-      #for file in fixup start bootcode LICENCE COPYING; do
-      #  cp firmware/boot/${file}* $SNAPCRAFT_PART_INSTALL/boot-assets
-      #done
   configs:
     plugin: dump
     source: configs
