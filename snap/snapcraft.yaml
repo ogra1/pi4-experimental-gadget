@@ -1,0 +1,172 @@
+name: pi4-devel
+base: core18
+version: '0.1'
+summary: Raspberry Pi 4 gadget
+description: |
+   Support files for booting Raspberry Pi.
+   This gadget snap supports the Pi4 and is highly experimental
+
+grade: stable
+confinement: strict
+type: gadget
+architectures:
+  - build-on: amd64
+    run-on: armhf
+
+parts:
+  uboot-pi4:
+    source: https://github.com/mbgg/u-boot.git
+    source-branch: rpi4-wip
+    source-depth: 1
+    plugin: nil
+    override-build: |
+      git apply -v ../../../uboot4.patch
+      cp -av arch/arm/dts/bcm2711-rpi-4-b.dtb .
+
+      make rpi_3_32b_defconfig
+      TCHAINVER="$(wget -q -O - \
+                 https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/| \
+                 html2text -width 200|grep 'x86_64_arm-linux-gnueabihf.tar.xz '|cut -d' ' -f2)"
+      wget https://releases.linaro.org/components/toolchain/binaries/latest-7/arm-linux-gnueabihf/$TCHAINVER
+      tar xf $TCHAINVER
+      mv $(echo $TCHAINVER|sed 's/.tar.xz$//') toolchain
+      EXT_DTB=../../../bcm2711-rpi-4-b.dtb CROSS_COMPILE=$(pwd)/toolchain/bin/arm-linux-gnueabihf- make
+      mkdir -p $SNAPCRAFT_PART_INSTALL/boot-assets
+      cp -av u-boot.bin $SNAPCRAFT_PART_INSTALL/boot-assets/uboot4.bin
+      tools/mkenvimage -r -s 131072 -o $SNAPCRAFT_PART_INSTALL/uboot.env ../../../uboot.env.in
+      ln -s uboot.env $SNAPCRAFT_PART_INSTALL/uboot.conf
+    build-packages:
+      - bc
+      - bison
+      - build-essential
+      - device-tree-compiler
+      - flex
+      - html2text
+      - libpython2.7-dev
+      - python-minimal
+      - gcc-arm-linux-gnueabihf
+  boot-firmware:
+    plugin: nil
+    source: .
+    after:
+      - uboot-pi4
+    override-build: |
+      git clone --depth=1 https://github.com/raspberrypi/firmware.git -b "1.20190709"
+      mkdir -p $SNAPCRAFT_PART_INSTALL/boot-assets
+      cp -av firmware/boot/* $SNAPCRAFT_PART_INSTALL/boot-assets
+      cp -av ../../../bcm2711-rpi-4-b.dtb $SNAPCRAFT_PART_INSTALL/boot-assets/
+      #for file in fixup start bootcode LICENCE COPYING; do
+      #  cp firmware/boot/${file}* $SNAPCRAFT_PART_INSTALL/boot-assets
+      #done
+  configs:
+    plugin: dump
+    source: configs
+    after:
+      - boot-firmware
+    organize:
+      config.txt: boot-assets/config.txt
+      cmdline.txt: boot-assets/cmdline.txt
+
+slots:
+  bcm-gpio-0:
+    interface: gpio
+    number: 0
+  bcm-gpio-1:
+    interface: gpio
+    number: 1
+  bcm-gpio-2:
+    interface: gpio
+    number: 2
+  bcm-gpio-3:
+    interface: gpio
+    number: 3
+  bcm-gpio-4:
+    interface: gpio
+    number: 4
+  bcm-gpio-5:
+    interface: gpio
+    number: 5
+  bcm-gpio-6:
+    interface: gpio
+    number: 6
+  bcm-gpio-7:
+    interface: gpio
+    number: 7
+  bcm-gpio-8:
+    interface: gpio
+    number: 8
+  bcm-gpio-9:
+    interface: gpio
+    number: 9
+  bcm-gpio-10:
+    interface: gpio
+    number: 10
+  bcm-gpio-11:
+    interface: gpio
+    number: 11
+  bcm-gpio-12:
+    interface: gpio
+    number: 12
+  bcm-gpio-13:
+    interface: gpio
+    number: 13
+  bcm-gpio-14:
+    interface: gpio
+    number: 14
+  bcm-gpio-15:
+    interface: gpio
+    number: 15
+  bcm-gpio-16:
+    interface: gpio
+    number: 16
+  bcm-gpio-17:
+    interface: gpio
+    number: 17
+  bcm-gpio-18:
+    interface: gpio
+    number: 18
+  bcm-gpio-19:
+    interface: gpio
+    number: 19
+  bcm-gpio-20:
+    interface: gpio
+    number: 20
+  bcm-gpio-21:
+    interface: gpio
+    number: 21
+  bcm-gpio-22:
+    interface: gpio
+    number: 22
+  bcm-gpio-23:
+    interface: gpio
+    number: 23
+  bcm-gpio-24:
+    interface: gpio
+    number: 24
+  bcm-gpio-25:
+    interface: gpio
+    number: 25
+  bcm-gpio-26:
+    interface: gpio
+    number: 26
+  bcm-gpio-27:
+    interface: gpio
+    number: 27
+  i2c-0:
+    interface: i2c
+    path: /dev/i2c-0
+  i2c-1:
+    interface: i2c
+    path: /dev/i2c-1
+  i2c-2:
+    interface: i2c
+    path: /dev/i2c-2
+  bt-serial:
+    interface: serial-port
+    path: /dev/ttyAMA0
+  spidev0:
+     interface: spi
+     path: /dev/spidev0.0
+  spidev1:
+     interface: spi
+     path: /dev/spidev0.1
