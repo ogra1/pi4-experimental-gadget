@@ -1,3 +1,12 @@
+diff --git a/configs/rpi_4_32b_defconfig b/configs/rpi_4_32b_defconfig
+index b71a1473..c7b75bd0 100644
+--- a/configs/rpi_4_32b_defconfig
++++ b/configs/rpi_4_32b_defconfig
+@@ -38,3 +38,4 @@ CONFIG_SYS_WHITE_ON_BLACK=y
+ CONFIG_CONSOLE_SCROLL_LINES=10
+ CONFIG_PHYS_TO_BUS=y
+ CONFIG_OF_LIBFDT_OVERLAY=y
++# CONFIG_ARCH_FIXUP_FDT_MEMORY is not set
 diff --git a/include/configs/rpi.h b/include/configs/rpi.h
 index 69a22e1..cfe987a 100644
 --- a/include/configs/rpi.h
