@@ -1,7 +1,7 @@
-diff --git a/configs/rpi_4_32b_defconfig b/configs/rpi_4_32b_defconfig
+diff --git a/configs/rpi_4_defconfig b/configs/rpi_4_defconfig
 index b71a1473..c7b75bd0 100644
---- a/configs/rpi_4_32b_defconfig
-+++ b/configs/rpi_4_32b_defconfig
+--- a/configs/rpi_4_defconfig
++++ b/configs/rpi_4_defconfig
 @@ -38,3 +38,4 @@ CONFIG_SYS_WHITE_ON_BLACK=y
  CONFIG_CONSOLE_SCROLL_LINES=10
  CONFIG_PHYS_TO_BUS=y

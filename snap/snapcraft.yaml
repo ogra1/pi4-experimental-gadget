@@ -11,7 +11,7 @@ confinement: strict
 type: gadget
 architectures:
   - build-on: amd64
-    run-on: armhf
+    run-on: arm64
 
 parts:
   uboot-pi4:
@@ -21,8 +21,8 @@ parts:
     plugin: nil
     override-build: |
       git apply -v ../../../uboot4.patch
-      make rpi_4_32b_defconfig
-      ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- make -j4
+      make rpi_4_defconfig
+      ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make -j4
       mkdir -p $SNAPCRAFT_PART_INSTALL/boot-assets
       cp -av u-boot.bin $SNAPCRAFT_PART_INSTALL/boot-assets/uboot4.bin
       tools/mkenvimage -r -s 131072 -o $SNAPCRAFT_PART_INSTALL/uboot.env ../../../uboot.env.in
@@ -36,7 +36,8 @@ parts:
       - html2text
       - libpython2.7-dev
       - python-minimal
-      - gcc-arm-linux-gnueabihf
+      - on amd64:
+        - gcc-aarch64-linux-gnu:amd64
   boot-firmware:
     plugin: nil
     source: .
