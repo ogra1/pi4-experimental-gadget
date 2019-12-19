@@ -43,10 +43,13 @@ parts:
     after:
       - uboot-pi4
     override-build: |
-      git clone --depth=1 https://github.com/raspberrypi/firmware.git -b "1.20190709"
+      git clone --depth=1 https://github.com/raspberrypi/firmware.git
       mkdir -p $SNAPCRAFT_PART_INSTALL/boot-assets
-      cp -av firmware/boot/* $SNAPCRAFT_PART_INSTALL/boot-assets
-      cp -av ../../../bcm2711-rpi-4-b.dtb $SNAPCRAFT_PART_INSTALL/boot-assets/
+      cp -av firmware/boot/fixup* $SNAPCRAFT_PART_INSTALL/boot-assets
+      cp -av firmware/boot/start* $SNAPCRAFT_PART_INSTALL/boot-assets
+      cp -av firmware/boot/COPYING.linux $SNAPCRAFT_PART_INSTALL/boot-assets
+      cp -av firmware/boot/LICENCE.broadcom $SNAPCRAFT_PART_INSTALL/boot-assets
+      cp -av ../../../devicetrees/* $SNAPCRAFT_PART_INSTALL/boot-assets/
   configs:
     plugin: dump
     source: configs
