@@ -20,12 +20,12 @@ parts:
     source-depth: 1
     plugin: nil
     override-build: |
-      git apply -v ../../../uboot4.patch
+      git apply -v $SNAPCRAFT_PROJECT_DIR/uboot4.patch
       make rpi_4_32b_defconfig
       ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- make -j4
       mkdir -p $SNAPCRAFT_PART_INSTALL/boot-assets
       cp -av u-boot.bin $SNAPCRAFT_PART_INSTALL/boot-assets/uboot4.bin
-      tools/mkenvimage -r -s 131072 -o $SNAPCRAFT_PART_INSTALL/uboot.env ../../../uboot.env.in
+      tools/mkenvimage -r -s 131072 -o $SNAPCRAFT_PART_INSTALL/uboot.env $SNAPCRAFT_PROJECT_DIR/uboot.env.in
       ln -s uboot.env $SNAPCRAFT_PART_INSTALL/uboot.conf
     build-packages:
       - bc
@@ -49,7 +49,7 @@ parts:
       cp -av firmware/boot/start* $SNAPCRAFT_PART_INSTALL/boot-assets
       cp -av firmware/boot/COPYING.linux $SNAPCRAFT_PART_INSTALL/boot-assets
       cp -av firmware/boot/LICENCE.broadcom $SNAPCRAFT_PART_INSTALL/boot-assets
-      cp -av ../../../devicetrees/* $SNAPCRAFT_PART_INSTALL/boot-assets/
+      cp -av $SNAPCRAFT_PROJECT_DIR/devicetrees/* $SNAPCRAFT_PART_INSTALL/boot-assets/
   configs:
     plugin: dump
     source: configs
